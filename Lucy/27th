@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Luce 🎉</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #5e2b97, #8e44ad);
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  color: white;
+}
+
+/* Intro screen */
+#intro {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#lyrics {
+  font-size: 20px;
+  text-align: center;
+  max-width: 80%;
+}
+
+/* Envelope */
+.envelope {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 220px;
+  cursor: pointer;
+  display: none;
+}
+
+.envelope.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  25% { transform: translate(-52%, -50%); }
+  50% { transform: translate(-48%, -50%); }
+  75% { transform: translate(-52%, -50%); }
+}
+
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #dcd6f7;
+  clip-path: polygon(0 0, 50% 60%, 100% 0);
+  transform-origin: top;
+  transition: transform 0.8s;
+}
+
+.body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #f5f3ff;
+}
+
+.letter {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background: white;
+  top: 5%;
+  left: 5%;
+  padding: 15px;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 1s;
+  color: black;
+}
+
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+.envelope.open .letter {
+  transform: translateY(0);
+}
+
+/* Animals */
+.animal {
+  position: absolute;
+  font-size: 30px;
+  animation: wander 20s linear infinite;
+}
+
+@keyframes wander {
+  0% { top: 10%; left: 10%; }
+  25% { top: 70%; left: 20%; }
+  50% { top: 50%; left: 80%; }
+  75% { top: 20%; left: 60%; }
+  100% { top: 10%; left: 10%; }
+}
+
+/* Polaroids */
+.polaroid {
+  width: 90px;
+  background: white;
+  padding: 5px;
+  margin: 5px;
+  display: inline-block;
+  transform: rotate(-5deg);
+}
+
+/* Buttons */
+button {
+  margin-top: 10px;
+  padding: 6px 10px;
+  background: #8e44ad;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- Animals -->
+
+<div class="animal">🐱</div>
+<div class="animal" style="animation-delay:5s">🐱</div>
+<div class="animal" style="animation-delay:10s">🐶</div>
+
+<!-- Intro -->
+
+<div id="intro">
+  <div id="lyrics"></div>
+  <button onclick="startCard()">Open your card 🎁</button>
+</div>
+
+<!-- Envelope -->
+
+<div class="envelope" id="env" onclick="openLetter()">
+  <div class="flap"></div>
+  <div class="body"></div>
+
+  <div class="letter">
+    <div id="text"></div>
+
+```
+<div>
+  <div class="polaroid"><img src="https://picsum.photos/100?1"></div>
+  <div class="polaroid"><img src="https://picsum.photos/100?2"></div>
+  <div class="polaroid"><img src="https://picsum.photos/100?3"></div>
+</div>
+
+<button onclick="toggleRoast()">🔥 Roast Mode</button>
+<div id="roast" style="display:none;color:red;">
+  Your camera roll is a crime scene.
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+const lyricsText = `Happy birthday to you,
+happy birthday to you,
+happy birthday dear Lucy,
+happy birthday to you.
+
+You smell like a monkey and you look like one too.
+Happy 27th!!`;
+
+const message = `I know we don't always see eye to eye — and I know I don't always make that easy. But you're my sister, and that doesn't change.
+
+You're turning 27 and you've already done more with your life than most people manage in twice that. You've travelled half the world, you throw yourself into everything headfirst, and you've got a bigger heart than you'll ever give yourself credit for. Even if you do insist on cuddling every stray cat on three continents.
+
+So here's a card full of the worst photos I could find of you. Consider it a gift.
+
+Happy birthday, Luce. I mean it.`;
+
+function typeText(text, elementId, speed=30) {
+  let i = 0;
+  const el = document.getElementById(elementId);
+  el.innerHTML = "";
+
+  function type() {
+    if (i < text.length) {
+      el.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+}
+
+function startCard() {
+  typeText(lyricsText, "lyrics", 40);
+
+  // simple tone (browser-safe)
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const o = ctx.createOscillator();
+  o.type = "sine";
+  o.frequency.value = 440;
+  o.connect(ctx.destination);
+  o.start();
+  setTimeout(() => o.stop(), 2000);
+
+  setTimeout(() => {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("env").style.display = "block";
+  }, 6000);
+}
+
+function openLetter() {
+  const env = document.getElementById("env");
+  env.classList.add("shake");
+
+  setTimeout(() => {
+    env.classList.add("open");
+
+    // trumpet-ish sound
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    o.type = "square";
+    o.frequency.value = 660;
+    o.connect(ctx.destination);
+    o.start();
+    setTimeout(() => o.stop(), 500);
+
+    typeText(message, "text");
+  }, 400);
+}
+
+function toggleRoast() {
+  const r = document.getElementById("roast");
+  r.style.display = r.style.display === "none" ? "block" : "none";
+}
+</script>
+
+</body>
+</html>
